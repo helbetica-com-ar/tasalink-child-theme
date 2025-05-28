@@ -41,13 +41,22 @@ add_action( 'wp_enqueue_scripts', 'hello_elementor_child_scripts_styles', 20 );
 // custom-mortgage-calculator Admin Page for past stored submissions
 add_action('admin_menu', 'mortgage_applications_admin_menu');
 
+// Debug: Check if theme is loaded
+add_action('init', function() {
+    error_log('Hello Theme Child is loaded');
+});
+
 function mortgage_applications_admin_menu() {
+    error_log('mortgage_applications_admin_menu function called');
+    
     add_menu_page(
         'Mortgage Applications',
         'Mortgage Apps', 
         'manage_options',
         'mortgage-applications',
-        'mortgage_applications_admin_page'
+        'mortgage_applications_admin_page',
+        'dashicons-list-view', // Add an icon
+        30 // Position after Posts/Pages
     );
 }
 
