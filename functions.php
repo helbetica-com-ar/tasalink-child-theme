@@ -39,12 +39,12 @@ add_action( 'wp_enqueue_scripts', 'hello_elementor_child_scripts_styles', 20 );
 
 
 // custom-mortgage-calculator Admin Page for past stored submissions
-add_action('admin_menu', 'mortgage_applications_admin_menu');
+add_action('admin_menu', 'tasalink_mortgage_applications_admin_menu');
 
 // Create database table on theme activation
-add_action('after_switch_theme', 'create_mortgage_applications_table');
+add_action('after_switch_theme', 'tasalink_create_mortgage_applications_table');
 
-function create_mortgage_applications_table() {
+function tasalink_create_mortgage_applications_table() {
     global $wpdb;
     $table_name = $wpdb->prefix . 'mortgage_applications';
     $charset_collate = $wpdb->get_charset_collate();
@@ -63,26 +63,26 @@ function create_mortgage_applications_table() {
     dbDelta($sql);
 }
 
-function mortgage_applications_admin_menu() {
-    error_log('mortgage_applications_admin_menu function called');
+function tasalink_mortgage_applications_admin_menu() {
+    error_log('tasalink_mortgage_applications_admin_menu function called');
     
     add_menu_page(
         'Mortgage Applications',
         'Mortgage Apps', 
         'manage_options',
         'mortgage-applications',
-        'mortgage_applications_admin_page',
+        'tasalink_mortgage_applications_admin_page',
         'dashicons-list-view', // Add an icon
         30 // Position after Posts/Pages
     );
 }
 
-function mortgage_applications_admin_page() {
+function tasalink_mortgage_applications_admin_page() {
     global $wpdb;
     $table_name = $wpdb->prefix . 'mortgage_applications';
     
     // Create table if it doesn't exist
-    create_mortgage_applications_table();
+    tasalink_create_mortgage_applications_table();
     
     $applications = $wpdb->get_results("SELECT * FROM $table_name ORDER BY submission_date DESC");
     
