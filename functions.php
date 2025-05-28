@@ -41,10 +41,27 @@ add_action( 'wp_enqueue_scripts', 'hello_elementor_child_scripts_styles', 20 );
 // custom-mortgage-calculator Admin Page for past stored submissions
 add_action('admin_menu', 'mortgage_applications_admin_menu');
 
-// Debug: Check if theme is loaded
-add_action('init', function() {
-    error_log('Hello Theme Child is loaded');
-});
+// Create database table on theme activation
+add_action('after_switch_theme', 'create_mortgage_applications_table');
+
+function create_mortgage_applications_table() {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'mortgage_applications';
+    $charset_collate = $wpdb->get_charset_collate();
+    
+    $sql = "CREATE TABLE IF NOT EXISTS $table_name (
+        id int(11) NOT NULL AUTO_INCREMENT,
+        full_name varchar(255) NOT NULL,
+        email varchar(255) NOT NULL,
+        loan_amount decimal(10,2) NOT NULL,
+        submission_date datetime DEFAULT CURRENT_TIMESTAMP,
+        status varchar(50) DEFAULT 'pending',
+        PRIMARY KEY (id)
+    ) $charset_collate;";
+    
+    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+    dbDelta($sql);
+}
 
 function mortgage_applications_admin_menu() {
     error_log('mortgage_applications_admin_menu function called');
@@ -63,6 +80,10 @@ function mortgage_applications_admin_menu() {
 function mortgage_applications_admin_page() {
     global $wpdb;
     $table_name = $wpdb->prefix . 'mortgage_applications';
+    
+    // Create table if it doesn't exist
+    create_mortgage_applications_table();
+    
     $applications = $wpdb->get_results("SELECT * FROM $table_name ORDER BY submission_date DESC");
     
     echo '<div class="wrap"><h1>Mortgage Applications</h1>';
